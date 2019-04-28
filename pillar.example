@@ -1,0 +1,66 @@
+linux:
+  system:
+    cpu:
+      governor: performance
+
+    sysfs:
+      scheduler:
+        block/sda/queue/scheduler: deadline
+      power:
+        mode:
+          power/state: 0660
+        owner:
+          power/state: "root:power"
+        devices/system/cpu/cpu0/cpufreq/scaling_governor: powersave
+
+
+    locale:
+      en_US.UTF-8:
+        default: true
+      "cs_CZ.UTF-8 UTF-8":
+        enabled: true
+
+
+    banner: |
+      UNAUTHORIZED ACCESS TO THIS SYSTEM IS PROHIBITED
+
+      You must have explicit, authorized permission to access or configure this
+      device. Unauthorized attempts and actions to access or use this system may
+      result in civil and/or criminal penalties.
+      All activities performed on this system are logged and monitored.
+
+
+    motd: |
+      UNAUTHORIZED ACCESS TO THIS SYSTEM IS PROHIBITED
+
+      You must have explicit, authorized permission to access or configure this
+      device. Unauthorized attempts and actions to access or use this system may
+      result in civil and/or criminal penalties.
+      All activities performed on this system are logged and monitored.
+
+
+    motd: |
+      This is [company name] network.
+      Unauthorized access strictly prohibited.
+
+
+    motd:
+      - release: |
+          #!/bin/sh
+          [ -r /etc/lsb-release ] && . /etc/lsb-release
+
+          if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
+            # Fall back to using the very slow lsb_release utility
+            DISTRIB_DESCRIPTION=$(lsb_release -s -d)
+          fi
+
+          printf "Welcome to %s (%s %s %s)\n" "$DISTRIB_DESCRIPTION" "$(uname -o)" "$(uname -r)" "$(uname -m)"
+      - warning: |
+          #!/bin/sh
+          printf "This is [company name] network.\n"
+          printf "Unauthorized access strictly prohibited.\n"
+
+
+    udev: |
+      # hdmi monitor
+      ACTION=="change", SUBSYSTEM=="drm", RUN+="/usr/local/bin/hdmi_hotplug.sh"
